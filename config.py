@@ -1,0 +1,41 @@
+SETTINGS = {
+    "AIM_ACTIVE": True,
+    "MAX_AIM_DISTANCE": 1500.0,
+    "HEAD_HEIGHT_OFFSET": 1.0,
+    "MAX_FOV_DEGREES": 10.0,
+    "OVERLAY_ACTIVE": True,
+    "WH_ACTIVE": False,
+    "AIM_SMOOTH_FACTOR": 3.0,
+    "HITBOX_OFFSETS": {
+        "Head": 1.0,
+        "Body": -20.0,
+        "Legs": -40.0
+    },
+    "CURRENT_HITBOX_KEY": "Head",
+    "AIM_PRIORITY_OPTIONS": ["Distance", "Health"],
+    "CURRENT_AIM_PRIORITY": "Distance",
+    "RADAR_ACTIVE": True,
+    "RADAR_RANGE": 1500.0,
+    "RADAR_SIZE": 200,
+    "ANTIFLASH_ACTIVE": False,
+}
+PROCESS_NAME = "hl2.exe"
+PROCESS_WINDOW_TITLE = "Counter-Strike Source"
+CLIENT_DLL_NAME = "client.dll"
+ENGINE_DLL_NAME = "engine.dll"
+OFFSET_LOCAL_PLAYER = 0x3B51C4
+OFFSET_ENTITY_LIST = 0x3BF1E4
+OFFSET_STATIC_VIEW_ANGLES = 0x3953F8
+ENTITY_SIZE_BYTES = 0x10
+OFFSET_HEALTH = 0xDA4
+OFFSET_ORIGIN = 0x29C
+OFFSET_TEAM = 0x2B8
+WH_OFFSET = 0x3B0C9C
+OFFSET_FLASH_ALPHA = 0xFD4
+OFFSET_FLASH_DURATION = 0xFD8
+LMB_VK_CODE = 0x01
+VK_INSERT = 0x2D
+PLAYER_POSITIONS = []
+pm = None
+client_base = 0
+engine_base = 0
