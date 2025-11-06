@@ -1,9 +1,65 @@
 import time
 from pymem import Pymem
 from pymem.process import module_from_name
-from config import SETTINGS, PROCESS_NAME, CLIENT_DLL_NAME, ENGINE_DLL_NAME, OFFSET_LOCAL_PLAYER, OFFSET_ENTITY_LIST, OFFSET_STATIC_VIEW_ANGLES, ENTITY_SIZE_BYTES, OFFSET_HEALTH, OFFSET_ORIGIN, OFFSET_TEAM, WH_OFFSET, OFFSET_FLASH_ALPHA, OFFSET_FLASH_DURATION, PLAYER_POSITIONS, pm, client_base, engine_base
+from pymem.pattern import pattern_scan_module
+from config import SETTINGS, PROCESS_NAME, CLIENT_DLL_NAME, ENGINE_DLL_NAME, OFFSET_LOCAL_PLAYER, OFFSET_ENTITY_LIST, OFFSET_STATIC_VIEW_ANGLES, ENTITY_SIZE_BYTES, OFFSET_HEALTH, OFFSET_ORIGIN, OFFSET_VIEW_MATRIX, OFFSET_TEAM, WH_OFFSET, OFFSET_FLASH_ALPHA, OFFSET_FLASH_DURATION, PLAYER_POSITIONS, OFFSET_BHOP_Y_POS, OFFSET_FORCE_JUMP, JUMP_KEY, pm, client_base, engine_base
 from core.memory import read_int, read_vec3, read_vec2, write_int, write_float, write_vec2
 from core.utils import is_lmb_pressed, calc_angle, normalize_angle, get_fov_distance
+import keyboard
+import math
+
+
+def WorldToScreen(viewmatrix, coords, width, height):
+
+    
+
+    x = viewmatrix[0] * coords[0] + viewmatrix[1] * coords[1] + viewmatrix[2] * coords[2] + viewmatrix[3]
+    y = viewmatrix[4] * coords[0] + viewmatrix[5] * coords[1] + viewmatrix[6] * coords[2] + viewmatrix[7]
+    w = viewmatrix[12] * coords[0] + viewmatrix[13] * coords[1] + viewmatrix[14] * coords[2] + viewmatrix[15]
+    
+    if w < 0.1:
+        return None 
+    
+
+    x = x / w
+    y = y / w
+    
+
+    screen_x = (width / 2 * x) + (x + width / 2)
+    screen_y = -(height / 2 * y) + (y + height / 2)
+    
+    return screen_x, screen_y, w
+
+def bunnyhop_c_style_check():
+    if not SETTINGS.get("BUNNYHOP_ACTIVE", False):
+        return
+        
+    if keyboard.is_pressed(JUMP_KEY):
+        
+        try:
+            VisY = pm.read_float(client_base + OFFSET_BHOP_Y_POS)
+        except Exception:
+            return
+
+        VisYnew = VisY
+
+        write_int(pm, client_base + OFFSET_FORCE_JUMP, 6)
+        
+        time.sleep(0.05)
+        
+        while keyboard.is_pressed(JUMP_KEY):
+            
+            try:
+                VisYnew = pm.read_float(client_base + OFFSET_BHOP_Y_POS)
+            except Exception:
+                break
+            
+            if VisY != VisYnew:
+                write_int(pm, client_base + OFFSET_FORCE_JUMP, 4)
+                
+                break 
+
+
 def aimbot_loop():
     global pm, client_base, engine_base
     try:
@@ -29,6 +85,9 @@ def aimbot_loop():
             if local_player_ptr == 0:
                 time.sleep(0.005)
                 continue
+            
+            bunnyhop_c_style_check()
+            
             local_health = read_int(pm, local_player_ptr + OFFSET_HEALTH)
             local_team = read_int(pm, local_player_ptr + OFFSET_TEAM)
             local_pos = read_vec3(pm, local_player_ptr + OFFSET_ORIGIN)

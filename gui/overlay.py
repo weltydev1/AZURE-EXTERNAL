@@ -264,7 +264,8 @@ class OverlayGUI(QWidget):
         layout = QVBoxLayout(tab)
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(5)
-        self.create_switch(layout, "Enable **Anti-Flash**", self.SETTINGS["ANTIFLASH_ACTIVE"], "ANTIFLASH_ACTIVE")
+        self.create_switch(layout, "Anti-Flash", self.SETTINGS["ANTIFLASH_ACTIVE"], "ANTIFLASH_ACTIVE")
+        self.create_switch(layout, "BUNNYHOP", self.SETTINGS["BUNNYHOP_ACTIVE"], "BUNNYHOP_ACTIVE")
         layout.addStretch(1)
         self.notebook.addTab(tab, "Misc")
     def toggle_setting(self, key, value):
